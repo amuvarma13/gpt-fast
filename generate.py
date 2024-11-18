@@ -13,7 +13,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 
-import AutoTokenizer
+from transformers import  AutoTokenizer
 
 def device_sync(device):
     if "cuda" in device:
