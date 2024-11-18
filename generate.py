@@ -32,7 +32,11 @@ def device_sync(device):
 tkn = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
 vocab = tkn.get_vocab()
-merges = tkn.backend_tokenizer.model.merges
+
+# Extract merges from the original tokenizer's JSON representation
+tokenizer_json = tkn.backend_tokenizer.to_str()
+tokenizer_dict = json.loads(tokenizer_json)
+merges = tokenizer_dict['model']['merges']
 
 # Create new tokenizer with same architecture
 new_tokenizer = Tokenizer(BPE(
@@ -49,7 +53,6 @@ new_tokenizer.post_processor = tkn.backend_tokenizer.post_processor
 
 # Save in .model format
 new_tokenizer.save("checkpoints/amuvarma/3days-tagged-noreps-caps/tokenizer.model")
-
 
 torch._inductor.config.coordinate_descent_tuning = True
 torch._inductor.config.triton.unique_kernel_names = True
