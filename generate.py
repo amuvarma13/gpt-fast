@@ -12,7 +12,8 @@ from typing import Optional, Tuple, Union
 import torch
 import torch._dynamo.config
 import torch._inductor.config
-from transformers import AutoTokenizer
+
+import AutoTokenizer
 
 def device_sync(device):
     if "cuda" in device:
@@ -21,6 +22,11 @@ def device_sync(device):
         pass
     else:
         print(f"device={device} is not yet suppported")
+
+
+tkn = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
+
+tkn.backend_tokenizer.save("checkpoints/amuvarma/3days-tagged-noreps-caps/tokenizer.model")
 
 
 torch._inductor.config.coordinate_descent_tuning = True
@@ -319,7 +325,7 @@ def main(
     device_sync(device=device) # MKG
     print(f"Time to load model: {time.time() - t0:.02f} seconds")
 
-    tokenizer = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
+    # tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
 
     if isinstance(prompt, str):
         encoded = encode_tokens(tokenizer, prompt, bos=True, device=device)
