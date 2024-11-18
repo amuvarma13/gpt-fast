@@ -8,6 +8,11 @@ import sys
 import time
 from pathlib import Path
 from typing import Optional, Tuple, Union
+from transformers import AutoTokenizer
+from tokenizers import Tokenizer, models, pre_tokenizers, decoders, processors
+from tokenizers.models import BPE
+import json
+import os
 
 import torch
 import torch._dynamo.config
@@ -26,7 +31,24 @@ def device_sync(device):
 
 tkn = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
-tkn.backend_tokenizer.save("checkpoints/amuvarma/3days-tagged-noreps-caps/tokenizer.model")
+vocab = tkn.get_vocab()
+merges = tkn.backend_tokenizer.model.merges
+
+# Create new tokenizer with same architecture
+new_tokenizer = Tokenizer(BPE(
+    vocab=vocab,
+    merges=merges,
+    cache_capacity=10000,
+    unk_token="[UNK]"
+))
+
+# Copy the original tokenizer's configuration
+new_tokenizer.pre_tokenizer = tkn.backend_tokenizer.pre_tokenizer
+new_tokenizer.decoder = tkn.backend_tokenizer.decoder
+new_tokenizer.post_processor = tkn.backend_tokenizer.post_processor
+
+# Save in .model format
+new_tokenizer.save("checkpoints/amuvarma/3days-tagged-noreps-caps/tokenizer.model")
 
 
 torch._inductor.config.coordinate_descent_tuning = True
