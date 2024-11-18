@@ -412,9 +412,10 @@ def main(
             # Just displaying the first generation
             if batch_size > 1:
                 print("Only displaying the first generation of the batch")
+            
             print(tokenizer.decode(y[0].tolist()))
         else:
-            print()
+            print("it is interactive")
         tokens_generated = y.size(-1) - prompt_length
         generated_tokens_sec = tokens_generated / t
         aggregate_metrics['tokens_per_sec'].append(generated_tokens_sec)
