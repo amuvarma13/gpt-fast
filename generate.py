@@ -33,15 +33,17 @@ tkn = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
 vocab = tkn.get_vocab()
 
-# Extract merges from the original tokenizer's JSON representation
+# Extract merges and convert to proper format
 tokenizer_json = tkn.backend_tokenizer.to_str()
 tokenizer_dict = json.loads(tokenizer_json)
 merges = tokenizer_dict['model']['merges']
+# Convert merges to tuples of pairs
+formatted_merges = [tuple(merge.split()) for merge in merges]
 
 # Create new tokenizer with same architecture
 new_tokenizer = Tokenizer(BPE(
     vocab=vocab,
-    merges=merges,
+    merges=formatted_merges,
     cache_capacity=10000,
     unk_token="[UNK]"
 ))
