@@ -18,6 +18,7 @@ import torch
 import torch._dynamo.config
 import torch._inductor.config
 
+from transformers import  AutoTokenizer
 
 def device_sync(device):
     if "cuda" in device:
@@ -43,6 +44,8 @@ sys.path.append(str(wd))
 
 from model import Transformer
 from tokenizer import get_tokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
 def multinomial_sample_one_no_sync(probs_sort): # Does multinomial sampling without a cuda synchronization
     q = torch.empty_like(probs_sort).exponential_(1)
@@ -296,8 +299,8 @@ def main(
     """
     assert checkpoint_path.is_file(), checkpoint_path
 
-    tokenizer_path = checkpoint_path.parent / "tokenizer.model"
-    assert tokenizer_path.is_file(), str(tokenizer_path)
+    # tokenizer_path = checkpoint_path.parent / "tokenizer.model"
+    # assert tokenizer_path.is_file(), str(tokenizer_path)
 
     global print
     from tp import maybe_init_dist
@@ -325,7 +328,8 @@ def main(
     device_sync(device=device) # MKG
     print(f"Time to load model: {time.time() - t0:.02f} seconds")
 
-    tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
+    # tokenizer = get_tokenizer(tokenizer_path, checkpoint_path)
+    tokenizer = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
     if isinstance(prompt, str):
         encoded = encode_tokens(tokenizer, prompt, bos=True, device=device)
