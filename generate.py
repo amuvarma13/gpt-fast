@@ -37,8 +37,8 @@ vocab = tkn.get_vocab()
 tokenizer_json = tkn.backend_tokenizer.to_str()
 tokenizer_dict = json.loads(tokenizer_json)
 merges = tokenizer_dict['model']['merges']
-# Convert merges to tuples of pairs
-formatted_merges = [tuple(merge.split()) for merge in merges]
+# Convert merges to tuples directly since they're already in list format
+formatted_merges = [tuple(merge) for merge in merges]
 
 # Create new tokenizer with same architecture
 new_tokenizer = Tokenizer(BPE(
