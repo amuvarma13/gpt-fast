@@ -412,7 +412,7 @@ def main(
             # Just displaying the first generation
             if batch_size > 1:
                 print("Only displaying the first generation of the batch")
-            
+            print("it is not interactive")  
             print(tokenizer.decode(y[0].tolist()))
         else:
             print("it is interactive")
