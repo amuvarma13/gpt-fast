@@ -332,7 +332,7 @@ def main(
     tokenizer = AutoTokenizer.from_pretrained("amuvarma/3days-tagged-noreps-caps")
 
     if isinstance(prompt, str):
-        encoded = encode_tokens(tokenizer, prompt, bos=True, device=device)
+        encoded = encode_tokens(tokenizer, prompt, bos=False, device=device)
     else:
         # generate a fully synthetic prompt
         encoded = torch.randint(0, 1024, (prompt,), device=device, dtype=torch.int64)
